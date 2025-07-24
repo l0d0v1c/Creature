@@ -1,20 +1,18 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>The Binding Problem</title>
   <style>
     body {
       margin: 0;
-      background: #090909; /* GrayLevel[9/255] */
+      background: #090909;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
     }
     canvas {
-      display: block;
-      /* Ratio PlotRange x:260 → y:320 → canvas 550×(550·320/260≈678) */
       width: 550px;
       height: 678px;
       background: transparent;
@@ -27,43 +25,53 @@
   <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-
     const W = canvas.width;
     const H = canvas.height;
 
-    // Correspondance avec PlotRange -> {{70,330},{30,350}}
+    // PlotRange mapping
     const xMin = 70, xMax = 330;
     const yMin = 30, yMax = 350;
     const xScale = W / (xMax - xMin);
     const yScale = H / (yMax - yMin);
 
     let t = 0;
+    const dtSpeed = 0.1; // small time offset for speed estimation
+
+    function computePoint(i, tVal) {
+      const x = i;
+      const y = i / 235;
+      const k = (4 + Math.sin(x / 11 + 8 * tVal)) * Math.cos(x / 14);
+      const e = y / 8 - 19;
+      const d = Math.hypot(k, e) + Math.sin(y / 9 + 2 * tVal);
+      const q = 2 * Math.sin(2 * k)
+              + Math.sin(y / 17) * k * (9 + 2 * Math.sin(y - 3 * d));
+      const c = d * d / 49 - tVal;
+      const xp = q + 50 * Math.cos(c) + 200;
+      const yp = q * Math.sin(c) + d * 39 - 440;
+      return { xp, yp: 400 - yp };
+    }
 
     function drawFrame() {
-      // Effacer le canevas (fond transparent laisse voir #090909)
       ctx.clearRect(0, 0, W, H);
-      // Points blancs, opacité 0.9
-      ctx.fillStyle = 'rgba(255,255,255,0.9)';
 
-      // Même boucle que dans votre Module, i de 9999 à 0
       for (let i = 9999; i >= 0; i--) {
-        const x = i;
-        const y = i / 235;
-        const k = (4 + Math.sin(x / 11 + 8 * t)) * Math.cos(x / 14);
-        const e = y / 8 - 19;
-        const d = Math.hypot(k, e) + Math.sin(y / 9 + 2 * t);
-        const q = 2 * Math.sin(2 * k)
-                + Math.sin(y / 17) * k * (9 + 2 * Math.sin(y - 3 * d));
-        const c = d * d / 49 - t;
-        const xp = q + 50 * Math.cos(c) + 200;
-        const yp = q * Math.sin(c) + d * 39 - 440;
-        const yPrime = 400 - yp;
+        // Current and offset positions
+        const p1 = computePoint(i, t);
+        const p2 = computePoint(i, t + dtSpeed);
 
-        // Projection sur le canevas
-        const px = (xp - xMin) * xScale;
-        const py = H - (yPrime - yMin) * yScale;
+        // Estimate speed (pixels per dtSpeed)
+        const vx = (p2.xp - p1.xp) / dtSpeed;
+        const vy = (p2.yp - p1.yp) / dtSpeed;
+        const speed = Math.hypot(vx, vy);
 
-        // Dessiner un pixel
+        // Map speed to hue (0–360)
+        const hue = (speed * 4) % 360;
+        ctx.fillStyle = `hsl(${hue}, 90%, 60%)`;
+
+        // Canvas projection
+        const px = (p1.xp - xMin) * xScale;
+        const py = H - (p1.yp - yMin) * yScale;
+
         ctx.fillRect(px, py, 1, 1);
       }
     }
@@ -75,7 +83,6 @@
       requestAnimationFrame(animate);
     }
 
-    // Démarrage de l’animation
     animate();
   </script>
 </body>
