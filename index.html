@@ -8,9 +8,26 @@
       margin: 0;
       background: #090909;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
+      color: white;
+      font-family: sans-serif;
+    }
+    #controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    button {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 4px;
     }
     canvas {
       width: 550px;
@@ -20,6 +37,9 @@
   </style>
 </head>
 <body>
+  <div id="controls">
+    <button id="toggleBW">Switch to B&W</button>
+  </div>
   <canvas id="canvas" width="550" height="678"></canvas>
 
   <script>
@@ -35,7 +55,13 @@
     const yScale = H / (yMax - yMin);
 
     let t = 0;
-    const dtSpeed = 0.1; // small time offset for speed estimation
+    const dtSpeed = 0.1;  // small time offset for speed estimation
+    let isBW = false;     // toggle flag
+
+    document.getElementById('toggleBW').addEventListener('click', () => {
+      isBW = !isBW;
+      document.getElementById('toggleBW').textContent = isBW ? 'Switch to Color' : 'Switch to B&W';
+    });
 
     function computePoint(i, tVal) {
       const x = i;
@@ -55,22 +81,20 @@
       ctx.clearRect(0, 0, W, H);
 
       for (let i = 9999; i >= 0; i--) {
-        // Current and offset positions
         const p1 = computePoint(i, t);
-        const p2 = computePoint(i, t + dtSpeed);
-
-        // Estimate speed (pixels per dtSpeed)
-        const vx = (p2.xp - p1.xp) / dtSpeed;
-        const vy = (p2.yp - p1.yp) / dtSpeed;
-        const speed = Math.hypot(vx, vy);
-
-        // Map speed to hue (0–360)
-        const hue = (speed * 4) % 360;
-        ctx.fillStyle = `hsl(${hue}, 90%, 60%)`;
-
-        // Canvas projection
         const px = (p1.xp - xMin) * xScale;
         const py = H - (p1.yp - yMin) * yScale;
+
+        if (isBW) {
+          ctx.fillStyle = 'rgba(255,255,255,0.9)';
+        } else {
+          const p2 = computePoint(i, t + dtSpeed);
+          const vx = (p2.xp - p1.xp) / dtSpeed;
+          const vy = (p2.yp - p1.yp) / dtSpeed;
+          const speed = Math.hypot(vx, vy);
+          const hue = (speed * 4) % 360;
+          ctx.fillStyle = `hsl(${hue}, 90%, 60%)`;
+        }
 
         ctx.fillRect(px, py, 1, 1);
       }
