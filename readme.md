@@ -4,6 +4,14 @@ A single-page HTML/JavaScript implementation of the mathematical "creature" orig
 
 
 
+## Quick view
+
+Display in browser : [https://l0d0v1c.github.io/Creature/](https://l0d0v1c.github.io/Creature/)
+
+
+
+
+
 ![](anim.gif)
 
 ---
