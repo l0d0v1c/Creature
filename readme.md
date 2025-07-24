@@ -1,6 +1,6 @@
 # The Binding Problem Animation
 
-A single-page HTML/JavaScript implementation of the mathematical "creature" originally defined in Mathematica, illustrating the binding problem in cognitive neuroscience and philosophy. Original math and processing code are by artist @yuruyurau on 𝕏 -- check him out.
+A single-page HTML/JavaScript implementation of the mathematical "creature" originally defined in Mathematica, illustrating the binding problem in cognitive neuroscience and philosophy. Original math and processing code are by artist @yuruyurau on 𝕏 -- check him out. Wolfram code https://community.wolfram.com/groups/-/m/t/3516580
 
 
 
