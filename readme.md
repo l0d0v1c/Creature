@@ -1,6 +1,10 @@
 # The Binding Problem Animation
 
-A single-page HTML/JavaScript implementation of the mathematical "creature" originally defined in Mathematica, illustrating the binding problem in cognitive neuroscience and philosophy.
+A single-page HTML/JavaScript implementation of the mathematical "creature" originally defined in Mathematica, illustrating the binding problem in cognitive neuroscience and philosophy. Original math and processing code are by artist @yuruyurau on 𝕏 -- check him out.
+
+
+
+![](anim.gif)
 
 ---
 
