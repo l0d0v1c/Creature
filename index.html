@@ -57,6 +57,7 @@
     let t = 0;
     const dtSpeed = 0.1;  // small time offset for speed estimation
     let isBW = false;     // toggle flag
+    const pointSize = 2;  // increased point size for more visibility
 
     document.getElementById('toggleBW').addEventListener('click', () => {
       isBW = !isBW;
@@ -86,17 +87,18 @@
         const py = H - (p1.yp - yMin) * yScale;
 
         if (isBW) {
-          ctx.fillStyle = 'rgba(255,255,255,0.9)';
+          ctx.fillStyle = 'rgba(255,255,255,1)'; // full opacity
         } else {
           const p2 = computePoint(i, t + dtSpeed);
           const vx = (p2.xp - p1.xp) / dtSpeed;
           const vy = (p2.yp - p1.yp) / dtSpeed;
           const speed = Math.hypot(vx, vy);
           const hue = (speed * 4) % 360;
-          ctx.fillStyle = `hsl(${hue}, 90%, 60%)`;
+          // brighter lightness for visibility
+          ctx.fillStyle = `hsl(${hue}, 90%, 75%)`;
         }
 
-        ctx.fillRect(px, py, 1, 1);
+        ctx.fillRect(px, py, pointSize, pointSize); // larger points
       }
     }
 
